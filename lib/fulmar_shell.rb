@@ -53,8 +53,8 @@ module Fulmar
           stderr.close
 
           # Remove annoying newlines at the end
-          @last_output.collect{|line| line.chomp}
-          @last_error.collect{|line| line.chomp}
+          @last_output = @last_output.collect{|line| line.chomp}
+          @last_error = @last_error.collect{|line| line.chomp}
 
           unless @quiet
             @last_error.each do |line|
