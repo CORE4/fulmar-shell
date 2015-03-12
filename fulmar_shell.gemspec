@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
   spec.summary       = %q{Small service to run shell commands on a local or remote shell}
   spec.description   = %q{This service takes a directory and a hostname (which might be 'localhost'). It then runs all commands given in the given directory on that machine.}
   spec.homepage      = 'http://git.core4.de/core4internal/fulmar_shell'
-  spec.license       = 'proprietary'
+  spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.bindir        = 'bin'
