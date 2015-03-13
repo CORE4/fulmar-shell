@@ -5,7 +5,7 @@ require 'fulmar-shell/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'fulmar-shell'
-  spec.version       = Fulmar::Shell::VERSION
+  spec.version       = Fulmar::SHELL_VERSION
   spec.authors       = ['Gerrit Visscher']
   spec.email         = ['g.visscher@core4.de']
 
