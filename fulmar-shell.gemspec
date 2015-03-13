@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'fulmar-shell/version'
+require 'fulmar/shell'
 
 Gem::Specification.new do |spec|
   spec.name          = 'fulmar-shell'
-  spec.version       = Fulmar::SHELL_VERSION
+  spec.version       = Fulmar::Shell::VERSION
   spec.authors       = ['Gerrit Visscher']
   spec.email         = ['g.visscher@core4.de']
 

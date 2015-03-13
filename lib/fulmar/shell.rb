@@ -1,4 +1,3 @@
-require 'fulmar-shell/version'
 require 'open3'
 
 # This shell is part of the fulmar deployment tools
@@ -6,6 +5,8 @@ require 'open3'
 module Fulmar
   # Implements simple access to shell commands
   class Shell
+    VERSION = '1.1.0'
+
     attr_accessor :debug, :last_output, :last_error, :quiet
 
     def initialize(path, host = 'localhost')
