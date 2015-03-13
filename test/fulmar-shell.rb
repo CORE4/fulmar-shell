@@ -2,7 +2,7 @@
 #coding: utf-8
 
 require 'minitest/autorun'
-require 'fulmar_shell'
+require 'fulmar-shell'
 
 class FulmarShellTest < MiniTest::Unit::TestCase
 
