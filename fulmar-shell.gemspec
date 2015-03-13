@@ -1,21 +1,21 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'fulmar_shell/version'
+require 'fulmar-shell/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'fulmar_shell'
-  spec.version       = FulmarShell::VERSION
+  spec.name          = 'fulmar-shell'
+  spec.version       = Fulmar::Shell::VERSION
   spec.authors       = ['Gerrit Visscher']
   spec.email         = ['g.visscher@core4.de']
 
-  if spec.respond_to?(:metadata)
-    spec.metadata['allowed_push_host'] = 'TODO: Set to \'http://mygemserver.com\' to prevent pushes to rubygems.org, or delete to allow pushes to any server.'
-  end
+  #if spec.respond_to?(:metadata)
+  #  spec.metadata['allowed_push_host'] = 'TODO: Set to \'http://mygemserver.com\' to prevent pushes to rubygems.org, or delete to allow pushes to any server.'
+  #end
 
   spec.summary       = %q{Small service to run shell commands on a local or remote shell}
   spec.description   = %q{This service takes a directory and a hostname (which might be 'localhost'). It then runs all commands given in the given directory on that machine.}
-  spec.homepage      = 'http://git.core4.de/core4internal/fulmar_shell'
+  spec.homepage      = 'https://github.com/CORE4/fulmar-shell'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }

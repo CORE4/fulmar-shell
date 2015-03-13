@@ -1,4 +1,4 @@
-require 'fulmar_shell/version'
+require 'fulmar-shell/version'
 require 'open3'
 
 module Fulmar

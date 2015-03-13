@@ -7,7 +7,7 @@ require 'fulmar-shell'
 class FulmarShellTest < MiniTest::Unit::TestCase
 
   def setup
-    @local_shell = Fulmar::Infrastructure::Service::ShellService.new('/tmp')
+    @local_shell = Fulmar::Shell.new('/tmp')
     @local_shell.quiet = true
   end
 

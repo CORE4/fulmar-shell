@@ -1,4 +1,4 @@
-# FulmarShell
+# Fulmar Shell
 
 This service takes a directory and a hostname (which might be 'localhost'). It then runs all commands given in the given directory on that machine.
 
@@ -9,7 +9,7 @@ This gem is private. The installation will only work within the CORE4 network.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'fulmar_shell', :git => 'git@git.core4.lan:core4internal/fulmar_shell.git'
+gem 'fulmar-shell', :git => 'https://github.com/CORE4/fulmar-shell.git'
 ```
 
 And then execute:
@@ -18,7 +18,10 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install fulmar_shell
+    $ git clone https://github.com/CORE4/fulmar-shell.git
+    $ cd fulmar-shell
+    $ gem build fulmar-shell.gemspec
+    $ gem install fulmar-shell-#.#.#.gem
 
 ## Usage
 
