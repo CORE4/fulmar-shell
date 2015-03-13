@@ -1,10 +1,11 @@
 require 'fulmar-shell/version'
 require 'open3'
 
+# This shell is part of the fulmar deployment tools
+# it can be used stand-alone, though
 module Fulmar
-
+  # Implements simple access to shell commands
   class Shell
-
     attr_accessor :debug, :last_output, :last_error, :quiet
 
     def initialize(path, host = 'localhost')
@@ -17,15 +18,12 @@ module Fulmar
     end
 
     def run(command)
-
-      if command.class == String
-        command = [command]
-      end
+      command = [command] if command.class == String
 
       command.unshift "cd #{@path}"
 
       if local?
-        execute('sh -c \'' + escape_for_sh(command.join(' && ')) + '\'')
+        execute("sh -c '#{escape_for_sh(command.join(' && '))}'")
       else
         remote_command = escape_for_sh('/bin/sh -c \'' + escape_for_sh(command.join(' && ')) + '\'')
         execute("ssh #{@host} '#{remote_command}'")
@@ -44,21 +42,16 @@ module Fulmar
       puts command if @debug
 
       stdin, stdout, stderr, wait_thr = Open3.popen3(command)
-      @last_error = stderr.readlines
-      @last_output = stdout.readlines
+
+      # Remove annoying newlines at the end
+      @last_output = stdout.readlines.collect(&:chomp)
+      @last_error = stderr.readlines.collect(&:chomp)
+
       stdin.close
       stdout.close
       stderr.close
 
-      # Remove annoying newlines at the end
-      @last_output = @last_output.collect{|line| line.chomp}
-      @last_error = @last_error.collect{|line| line.chomp}
-
-      unless @quiet
-        @last_error.each do |line|
-          puts line
-        end
-      end
+      @last_error.each { |line| puts line } unless @quiet
 
       wait_thr.value == 0
     end
@@ -66,7 +59,5 @@ module Fulmar
     def escape_for_sh(text)
       text.gsub('\\', '\\\\').gsub("'", "'\\\\''")
     end
-
   end
-
 end
