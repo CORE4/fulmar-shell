@@ -5,7 +5,7 @@ require 'open3'
 module Fulmar
   # Implements simple access to shell commands
   class Shell
-    VERSION = '1.1.0'
+    VERSION = '1.1.1'
 
     attr_accessor :debug, :last_output, :last_error, :quiet
 
