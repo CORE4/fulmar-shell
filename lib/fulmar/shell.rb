@@ -37,14 +37,14 @@ module Fulmar
     end
 
     def path=(path)
-      @path = File.expand_path(path)
+      @path = local? ? File.expand_path(path) : path
     end
 
     protected
 
     # Run the command and capture the output
     def execute(command)
-      # DEBUG, baby!
+      # Ladies and gentleman: More debug, please!
       puts command if @debug
 
       stdin, stdout, stderr, wait_thr = Open3.popen3(command)
