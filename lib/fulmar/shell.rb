@@ -5,12 +5,13 @@ require 'open3'
 module Fulmar
   # Implements simple access to shell commands
   class Shell
-    VERSION = '1.1.2'
+    VERSION = '1.2.0'
 
     attr_accessor :debug, :last_output, :last_error, :quiet
+    attr_reader :path
 
     def initialize(path, host = 'localhost')
-      @path = (path.nil? || path.empty?) ? '.' : path
+      @path = File.expand_path((path.nil? || path.empty?) ? '.' : path)
       @host = host
       @last_output = []
       @last_error = []
@@ -33,6 +34,10 @@ module Fulmar
 
     def local?
       @host == 'localhost'
+    end
+
+    def path=(path)
+      @path = File.expand_path(path)
     end
 
     protected
