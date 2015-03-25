@@ -5,9 +5,9 @@ require 'open3'
 module Fulmar
   # Implements simple access to shell commands
   class Shell
-    VERSION = '1.3.0'
+    VERSION = '1.4.0'
 
-    attr_accessor :debug, :last_output, :last_error, :quiet
+    attr_accessor :debug, :last_output, :last_error, :quiet, :strict
     attr_reader :path
 
     def initialize(path = '.', host = 'localhost')
@@ -19,6 +19,7 @@ module Fulmar
       @debug = false
       @quiet = false
       @environment = {}
+      @strict = false
     end
 
     def run(command, options = {})
@@ -72,11 +73,25 @@ module Fulmar
 
       @last_error.each { |line| puts line } unless @quiet
 
+      if @strict and wait_thr.value != 0
+        dump_error_message(command)
+        fail 'Last shell command returned an error.'
+      end
+
       wait_thr.value == 0
     end
 
     def escape_for_sh(text)
       text.gsub('\\', '\\\\').gsub("'", "'\\\\''")
+    end
+
+    def dump_error_message(command)
+      STDERR.puts command unless @debug
+      STDERR.puts 'Command output (stdout):'
+      @last_output.each { |line| STDERR.puts line }
+      STDERR.puts ''
+      STDERR.puts 'Command error message (stderr):'
+      @last_error.each { |line| STDERR.puts line }
     end
   end
 end
