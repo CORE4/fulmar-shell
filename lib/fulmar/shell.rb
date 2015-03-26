@@ -5,7 +5,7 @@ require 'open3'
 module Fulmar
   # Implements simple access to shell commands
   class Shell
-    VERSION = '1.4.0'
+    VERSION = '1.5.0'
 
     attr_accessor :debug, :last_output, :last_error, :quiet, :strict
     attr_reader :path
@@ -33,16 +33,18 @@ module Fulmar
         path = @path
       end
 
+      options[:error_message] ||= 'Last shell command returned an error.'
+
       command.unshift "cd #{path}"
 
       # invoke a login shell?
       shell_command = options[:login] ? 'env -i bash -lc' : 'bash -c'
 
       if local?
-        execute("#{shell_command} '#{escape_for_sh(command.join(' && '))}'")
+        execute("#{shell_command} '#{escape_for_sh(command.join(' && '))}'", options[:error_message])
       else
         remote_command = escape_for_sh("#{shell_command} '#{escape_for_sh(command.join(' && '))}'")
-        execute("ssh #{@host} '#{remote_command}'")
+        execute("ssh #{@host} '#{remote_command}'", options[:error_message])
       end
     end
 
@@ -57,7 +59,7 @@ module Fulmar
     protected
 
     # Run the command and capture the output
-    def execute(command)
+    def execute(command, error_message)
       # Ladies and gentleman: More debug, please!
       puts command if @debug
 
@@ -75,7 +77,7 @@ module Fulmar
 
       if @strict and wait_thr.value != 0
         dump_error_message(command)
-        fail 'Last shell command returned an error.'
+        fail error_message
       end
 
       wait_thr.value == 0
