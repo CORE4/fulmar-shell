@@ -5,7 +5,7 @@ require 'open3'
 module Fulmar
   # Implements simple access to shell commands
   class Shell
-    VERSION = '1.5.0'
+    VERSION = '1.5.1'
 
     attr_accessor :debug, :last_output, :last_error, :quiet, :strict
     attr_reader :path
@@ -38,7 +38,7 @@ module Fulmar
       command.unshift "cd #{path}"
 
       # invoke a login shell?
-      shell_command = options[:login] ? 'env -i bash -lc' : 'bash -c'
+      shell_command = options[:login] ? clean_environment : 'bash -c'
 
       if local?
         execute("#{shell_command} '#{escape_for_sh(command.join(' && '))}'", options[:error_message])
@@ -57,6 +57,10 @@ module Fulmar
     end
 
     protected
+
+    def clean_environment
+      "env -i HOME=\"#{ENV['HOME']}\" bash -lc"
+    end
 
     # Run the command and capture the output
     def execute(command, error_message)
