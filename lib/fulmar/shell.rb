@@ -5,7 +5,7 @@ require 'open3'
 module Fulmar
   # Implements simple access to shell commands
   class Shell
-    VERSION = '1.5.1'
+    VERSION = '1.5.2'
 
     attr_accessor :debug, :last_output, :last_error, :quiet, :strict
     attr_reader :path
@@ -59,7 +59,7 @@ module Fulmar
     protected
 
     def clean_environment
-      "env -i HOME=\"#{ENV['HOME']}\" bash -lc"
+      "env -i HOME=\"#{ENV['HOME']}\" LANG=\"#{ENV['LANG']}\" bash -lc"
     end
 
     # Run the command and capture the output
