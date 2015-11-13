@@ -5,10 +5,15 @@ require 'open3'
 module Fulmar
   # Implements simple access to shell commands
   class Shell
-    VERSION = '1.5.2'
+    VERSION = '1.6.0'
 
     attr_accessor :debug, :last_output, :last_error, :quiet, :strict
     attr_reader :path
+
+    DEFAULT_OPTIONS = {
+      login: false,
+      bundler: true #
+    }
 
     def initialize(path = '.', host = 'localhost')
       @host = host
@@ -18,11 +23,11 @@ module Fulmar
       @last_error = []
       @debug = false
       @quiet = false
-      @environment = {}
       @strict = false
+      @clean_environment = [] # list of things to clean from environment variables
     end
 
-    def run(command, options = {})
+    def run(command, options = DEFAULT_OPTIONS)
       command = [command] if command.class == String
 
       # is a custom path given?
@@ -38,7 +43,9 @@ module Fulmar
       command.unshift "cd #{path}"
 
       # invoke a login shell?
-      shell_command = options[:login] ? clean_environment : 'bash -c'
+      shell_command = shell_command(options[:login])
+
+      @clean_environment << 'bundler' if options[:escape_bundler]
 
       if local?
         execute("#{shell_command} '#{escape_for_sh(command.join(' && '))}'", options[:error_message])
@@ -58,8 +65,23 @@ module Fulmar
 
     protected
 
-    def clean_environment
-      "env -i HOME=\"#{ENV['HOME']}\" LANG=\"#{ENV['LANG']}\" bash -lc"
+    def shell_command(login)
+      login ? "env -i HOME=\"#{ENV['HOME']}\" LANG=\"#{ENV['LANG']}\" bash -lc" : 'bash -c'
+    end
+
+    def environment
+      env = ENV.clone
+      if @clean_environment.include? 'bundler'
+        bundler_variable_parts = %w(ruby gem_ bundle)
+        # Remove any variables which contain the words above
+        env.delete_if { |key| bundler_variable_parts.select { |part| key.downcase.include?(part) }.any? }
+        env['PATH'] = path_without_bundler
+      end
+      env
+    end
+
+    def path_without_bundler
+      ENV['PATH'].split(':').reject { |path| path.include?('ruby') || path.include?('gems') }.join(':')
     end
 
     # Run the command and capture the output
@@ -67,7 +89,7 @@ module Fulmar
       # Ladies and gentleman: More debug, please!
       puts command if @debug
 
-      stdin, stdout, stderr, wait_thr = Open3.popen3(command)
+      stdin, stdout, stderr, wait_thr = Open3.popen3(environment, command)
 
       # Remove annoying newlines at the end
       @last_output = stdout.readlines.collect(&:chomp)
