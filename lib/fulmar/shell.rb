@@ -5,7 +5,7 @@ require 'open3'
 module Fulmar
   # Implements simple access to shell commands
   class Shell
-    VERSION = '1.6.0'
+    VERSION = '1.6.1'
 
     attr_accessor :debug, :last_output, :last_error, :quiet, :strict
     attr_reader :path
@@ -88,25 +88,34 @@ module Fulmar
     def execute(command, error_message)
       # Ladies and gentleman: More debug, please!
       puts command if @debug
+      return_value = -1
 
-      stdin, stdout, stderr, wait_thr = Open3.popen3(environment, command)
+      Open3.popen3(environment, command) do |_stdin, stdout, stderr, wait_thread|
+        Thread.new do
+          stdout.each do |line|
+            @last_value << line
+            puts line unless @quiet
+          end
+        end
 
-      # Remove annoying newlines at the end
-      @last_output = stdout.readlines.collect(&:chomp)
-      @last_error = stderr.readlines.collect(&:chomp)
+        Thread.new do
+          stderr.each do |line|
+            @last_error << line
+            puts line unless @quiet
+          end
+        end
 
-      stdin.close
-      stdout.close
-      stderr.close
+        _stdin.close
 
-      @last_error.each { |line| puts line } unless @quiet
+        return_value = wait_thread.value
 
-      if @strict and wait_thr.value != 0
-        dump_error_message(command)
-        fail error_message
+        if @strict and return_value != 0
+          dump_error_message(command)
+          fail error_message
+        end
       end
 
-      wait_thr.value == 0
+      return_value == 0
     end
 
     def escape_for_sh(text)
