@@ -5,7 +5,7 @@ require 'open3'
 module Fulmar
   # Implements simple access to shell commands
   class Shell
-    VERSION = '1.6.1'
+    VERSION = '1.6.2'
 
     attr_accessor :debug, :last_output, :last_error, :quiet, :strict
     attr_reader :path
@@ -28,6 +28,7 @@ module Fulmar
     end
 
     def run(command, options = DEFAULT_OPTIONS)
+      reset_output
       command = [command] if command.class == String
 
       # is a custom path given?
@@ -64,6 +65,11 @@ module Fulmar
     end
 
     protected
+
+    def reset_output
+      @last_output = []
+      @last_error = []
+    end
 
     def shell_command(login)
       login ? "env -i HOME=\"#{ENV['HOME']}\" LANG=\"#{ENV['LANG']}\" bash -lc" : 'bash -c'
