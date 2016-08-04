@@ -5,7 +5,7 @@ require 'open3'
 module Fulmar
   # Implements simple access to shell commands
   class Shell
-    VERSION = '1.6.3'
+    VERSION = '1.6.4'
 
     attr_accessor :debug, :last_output, :last_error, :quiet, :strict
     attr_reader :path
@@ -22,7 +22,7 @@ module Fulmar
       @last_output = []
       @last_error = []
       @debug = false
-      @quiet = false
+      @quiet = true
       @strict = false
       @clean_environment = [] # list of things to clean from environment variables
     end
@@ -99,7 +99,7 @@ module Fulmar
       Open3.popen3(environment, command) do |_stdin, stdout, stderr, wait_thread|
         Thread.new do
           stdout.each do |line|
-            @last_value << line
+            @last_output << line
             puts line unless @quiet
           end
         end
