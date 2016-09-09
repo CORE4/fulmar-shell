@@ -5,7 +5,7 @@ require 'open3'
 module Fulmar
   # Implements simple access to shell commands
   class Shell
-    VERSION = '1.6.5'
+    VERSION = '1.6.6'
 
     attr_accessor :debug, :last_output, :last_error, :quiet, :strict
     attr_reader :path
@@ -41,7 +41,7 @@ module Fulmar
 
       options[:error_message] ||= 'Last shell command returned an error.'
 
-      command.unshift "cd #{path}"
+      command.unshift "cd \"#{path}\""
 
       # invoke a login shell?
       shell_command = shell_command(options[:login])
