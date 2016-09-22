@@ -115,13 +115,13 @@ module Fulmar
 
         return_value = wait_thread.value
 
-        if @strict and return_value != 0
+        if @strict and return_value.exitstatus != 0
           dump_error_message(command)
           fail error_message
         end
       end
 
-      return_value == 0
+      return_value.exitstatus == 0
     end
 
     def escape_for_sh(text)
