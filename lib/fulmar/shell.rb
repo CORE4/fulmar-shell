@@ -12,7 +12,7 @@ module Fulmar
 
     DEFAULT_OPTIONS = {
       login: false,
-      bundler: true #
+      escape_bundler: false
     }
 
     def initialize(path = '.', host = 'localhost')
