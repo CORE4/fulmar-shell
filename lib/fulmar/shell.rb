@@ -83,6 +83,7 @@ module Fulmar
         env.delete_if { |key| bundler_variable_parts.select { |part| key.downcase.include?(part) }.any? }
         env['PATH'] = path_without_bundler
       end
+      puts "Environment: #{env.inspect}" if @debug
       env
     end
 
@@ -120,6 +121,8 @@ module Fulmar
           fail error_message
         end
       end
+
+      puts "Program exited with status #{return_value.exitstatus}." if @debug
 
       return_value.exitstatus == 0
     end
