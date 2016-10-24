@@ -5,9 +5,9 @@ require 'open3'
 module Fulmar
   # Implements simple access to shell commands
   class Shell
-    VERSION = '1.6.7'
+    VERSION = '1.7.0'
 
-    attr_accessor :debug, :last_output, :last_error, :quiet, :strict
+    attr_accessor :debug, :last_output, :last_error, :quiet, :strict, :interactive
     attr_reader :path
 
     DEFAULT_OPTIONS = {
@@ -24,7 +24,13 @@ module Fulmar
       @debug = false
       @quiet = true
       @strict = false
+      @interactive = false
       @clean_environment = [] # list of things to clean from environment variables
+    end
+
+    def interactive=(interactive)
+      @interactive = interactive
+      @quiet = false if interactive
     end
 
     def run(command, options = DEFAULT_OPTIONS)
@@ -91,8 +97,22 @@ module Fulmar
       ENV['PATH'].split(':').reject { |path| path.include?('ruby') || path.include?('gems') }.join(':')
     end
 
-    # Run the command and capture the output
     def execute(command, error_message)
+      if @interactive
+        execute_interactive(command, error_message)
+      else
+        execute_quiet(command, error_message)
+      end
+    end
+
+    def execute_interactive(command, error_message)
+      unless system(command)
+        puts "\n\n#{error_message}"
+      end
+    end
+
+    # Run the command and capture the output
+    def execute_quiet(command, error_message)
       # Ladies and gentleman: More debug, please!
       puts command if @debug
       return_value = -1
