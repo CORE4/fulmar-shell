@@ -1,14 +1,17 @@
 require 'open3'
+require 'fulmar/ringbuffer'
 
 # This shell is part of the fulmar deployment tools
 # it can be used stand-alone, though
 module Fulmar
   # Implements simple access to shell commands
   class Shell
-    VERSION = '1.7.0'
+    VERSION = '1.8.0'
 
     attr_accessor :debug, :last_output, :last_error, :quiet, :strict, :interactive
     attr_reader :path
+
+    DEFAULT_BUFFER_SIZE = 1000
 
     DEFAULT_OPTIONS = {
       login: false,
@@ -19,8 +22,8 @@ module Fulmar
       @host = host.nil? ? 'no_hostname_set' : host
       @path = (path.nil? || path.empty?) ? '.' : path
       @path = File.expand_path(@path) if local?
-      @last_output = []
-      @last_error = []
+      @last_output = Fulmar::RingBuffer.new(DEFAULT_BUFFER_SIZE)
+      @last_error = Fulmar::RingBuffer.new(DEFAULT_BUFFER_SIZE)
       @debug = false
       @quiet = true
       @strict = false
@@ -68,6 +71,11 @@ module Fulmar
 
     def path=(path)
       @path = local? ? File.expand_path(path) : path
+    end
+
+    def buffer_size(size)
+      @last_output = Fulmar::RingBuffer.new(size)
+      @last_error = Fulmar::RingBuffer.new(size)
     end
 
     protected
