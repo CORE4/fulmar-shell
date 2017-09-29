@@ -1,4 +1,5 @@
 require 'open3'
+require 'pathname'
 require 'fulmar/ringbuffer'
 
 # This shell is part of the fulmar deployment tools
@@ -42,7 +43,7 @@ module Fulmar
       # is a custom path given?
       if options[:in]
         # is it absolute?
-        path = options[:in][0, 1] == '/' ? options[:in] : "#{@path}/#{options[:in]}"
+        (Pathname.new options[:in]).absolute? ? options[:in] : "#{@path}/#{options[:in]}"
       else
         path = @path
       end
