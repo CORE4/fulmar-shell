@@ -22,8 +22,7 @@ module Fulmar
       @host = host.nil? ? 'no_hostname_set' : host
       @path = (path.nil? || path.empty?) ? '.' : path
       @path = File.expand_path(@path) if local?
-      @last_output = Fulmar::RingBuffer.new(DEFAULT_BUFFER_SIZE)
-      @last_error = Fulmar::RingBuffer.new(DEFAULT_BUFFER_SIZE)
+      reset_output
       @debug = false
       @quiet = true
       @strict = false
@@ -37,7 +36,7 @@ module Fulmar
     end
 
     def run(command, options = DEFAULT_OPTIONS)
-      reset_output
+      reset_output(@last_output.max_size)
       command = [command] if command.class == String
 
       # is a custom path given?
@@ -74,15 +73,14 @@ module Fulmar
     end
 
     def buffer_size(size)
-      @last_output = Fulmar::RingBuffer.new(size)
-      @last_error = Fulmar::RingBuffer.new(size)
+      reset_output(size)
     end
 
     protected
 
-    def reset_output
-      @last_output = []
-      @last_error = []
+    def reset_output(size = DEFAULT_BUFFER_SIZE)
+      @last_output = Fulmar::RingBuffer.new(size)
+      @last_error = Fulmar::RingBuffer.new(size)
     end
 
     def shell_command(login)
