@@ -41,12 +41,12 @@ module Fulmar
       command = [command] if command.class == String
 
       # is a custom path given?
-      if options[:in]
-        # is it absolute?
-        (Pathname.new options[:in]).absolute? ? options[:in] : "#{@path}/#{options[:in]}"
-      else
-        path = @path
-      end
+      path = if options[:in]
+               # is it absolute?
+               (Pathname.new options[:in]).absolute? ? options[:in] : "#{@path}/#{options[:in]}"
+             else
+               @path
+             end
 
       options[:error_message] ||= 'Last shell command returned an error.'
 
