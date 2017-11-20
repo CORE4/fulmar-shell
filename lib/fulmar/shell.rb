@@ -7,7 +7,7 @@ require 'fulmar/ringbuffer'
 module Fulmar
   # Implements simple access to shell commands
   class Shell
-    VERSION = '1.8.0'
+    VERSION = '1.8.1'
 
     attr_accessor :debug, :last_output, :last_error, :quiet, :strict, :interactive
     attr_reader :path
