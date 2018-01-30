@@ -2,12 +2,14 @@ require 'open3'
 require 'pathname'
 require 'fulmar/ringbuffer'
 
+Thread.report_on_exception = false
+
 # This shell is part of the fulmar deployment tools
 # it can be used stand-alone, though
 module Fulmar
   # Implements simple access to shell commands
   class Shell
-    VERSION = '1.8.1'
+    VERSION = '1.8.2'
 
     attr_accessor :debug, :last_output, :last_error, :quiet, :strict, :interactive
     attr_reader :path
